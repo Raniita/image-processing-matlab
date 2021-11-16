@@ -15,14 +15,14 @@ X = grayslice(img, 16);
 figure
 %subplot(1,2,1),
 subimage(img);
-axis off square,
+axis off image,
 colormap gray,
 title('Imagen Original')
 
 figure
 %subplot(1,2,2),
-subimage(X, jet(16));
-axis off square,
+subimage(X, copper(16));
+axis off image,
 title('Más azulado, algo más de detalle')
 
 %subplot(1,4,3),
