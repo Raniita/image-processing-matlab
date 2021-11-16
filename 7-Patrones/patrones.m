@@ -1,68 +1,68 @@
 % 7 - Patrones
 % Enrique
 % ref: https://es.mathworks.com/matlabcentral/answers/90094-how-to-convolved-two-image
-
-% TODO: CHECK UINT8 PROBLEM
-
 clear;
 
 img_rgb = 'patrones.jpg';
-threshold_corre = 0.35;
+threshold_corre = 0.55;
+threshold_stars = 0.85;
  
 img_rgb = single(imread(img_rgb));
 img_rgb = mat2gray(img_rgb,[0 255]);
 img = rgb2gray(img_rgb);
-%[img, map] = rgb2ind(img_rgb, 256);
-%ind2rgb(img, map)
 
-lambda_covar = @(A,B) conv2(A-mean(A(:)), B(end:-1:1,end:-1:1)-mean(B(:)),'valid');
-lambda_autocovar = @(A,B) conv2(A.*A,ones(size(B)),'valid')-conv2(A,ones(size(B)),'valid').^2/numel(B);
+% Funciones en una linea
+lambda_covar = @(A,B) conv2(A-mean(A(:)), B(end:-1:1,end:-1:1)-mean(B(:)), 'valid');
+lambda_autocovar = @(A,B) conv2(A.*A, ones(size(B)), 'valid')-conv2(A, ones(size(B)), 'valid').^2/numel(B);
 
-% Imagen original en escala de grises
-figure, set(gcf, 'Name', 'Pattern Detection: Source Image', 'Position', get(0,'Screensize'))
-subplot(1,2,1), 
-imshow(img), 
-axis off square,
-title('Original Image')
-%colormap gray, 
+% Imagen original
+figure,
+imshow(img, [0 1]), 
+axis off image,
+title('Imagen original [RGB]')
 
-%subplot(1,2,2), mesh(PatternDetection), axis off square, set(gca,'YDir','reverse'), title('Original Image (Elevation Plot)')
-
-%Pattern = PatternDetection(163:178,84:100);
-p_img = single(ginput(2));
-Pattern = img(p_img(1,2):p_img(2,2), p_img(1,1):p_img(2,1));
+% Ejemplo de pattern: Pattern = PatternDetection(163:178,84:100);
+p_img = round(ginput(2));       % Warning, must be integer to use as index
+selected_pattern = img(p_img(1,2):p_img(2,2), p_img(1,1):p_img(2,1));
 
 % Imagen del pattern seleccionado
-figure, set(gcf, 'Name', 'Pattern Detection: Small Pattern to Detect', 'Position', get(0,'Screensize'))
+figure,
 subplot(1,2,1), 
-imshow(Pattern, [0 1]), 
-axis off square,
-title('Small Pattern')
-%colormap gray, 
+imshow(selected_pattern, [0 1]), 
+axis off image,
+title('Patrón seleccionado')
 
-subplot(1,2,2), mesh(Pattern), axis off square, set(gca,'XDir','reverse'), title('Small Pattern (Elevation Plot)')
+subplot(1,2,2), 
+mesh(selected_pattern), 
+axis off square, 
+set(gca,'XDir','reverse'), 
+title('Patrón seleccionado (plot en elevación)')
 
 %% Deteccion del patron
+coef_pearson = lambda_covar(single(img), single(selected_pattern));
+coef_pearson_dem = sqrt(lambda_autocovar(img, selected_pattern).*lambda_autocovar(selected_pattern, selected_pattern));
+index = find(coef_pearson_dem ~= 0);
+coef_pearson(index) = coef_pearson(index)./coef_pearson_dem(index);
 
-PearsonCorrelationCoefficient = lambda_covar(single(img), single(Pattern));
-PearsonCorrelationCoefficientDem = sqrt(lambda_autocovar(img,Pattern).*lambda_autocovar(Pattern,Pattern));
-index = find(PearsonCorrelationCoefficientDem ~= 0);
-PearsonCorrelationCoefficient(index) = PearsonCorrelationCoefficient(index)./PearsonCorrelationCoefficientDem(index);
+coef_pearson = padarray(coef_pearson, floor((size(selected_pattern)-1)/2), 0, 'post');
+coef_pearson = padarray(coef_pearson, ceil((size(selected_pattern)-1)/2), 0, 'pre');
+coef_pearson = coef_pearson.*(coef_pearson > threshold_corre);
 
-PearsonCorrelationCoefficient = padarray(PearsonCorrelationCoefficient,floor((size(Pattern)-1)/2),0,'post');
-PearsonCorrelationCoefficient = padarray(PearsonCorrelationCoefficient,ceil((size(Pattern)-1)/2),0,'pre');
-PearsonCorrelationCoefficient = PearsonCorrelationCoefficient.*(PearsonCorrelationCoefficient>threshold_corre);
-
-figure, set(gcf, 'Name', 'Pattern Detection: Small Pattern Result', 'Position', get(0,'Screensize'))
+figure,
 subplot(1,2,1), 
-imshow(PearsonCorrelationCoefficient*50+img, [0 1]),
-axis off square, 
-title('Pearson Correlation Coefficient')
+imshow(coef_pearson*50+img, [0 1]),
+axis off image, 
+title('Patrones detectados resaltados en amarillo')
+% Resaltamos las ocurrencias con amarillo
 map=colormap('gray'); 
 map(256,:)=[1 1 0]; colormap(map)
 
 subplot(1,2,2), 
-mesh(PearsonCorrelationCoefficient), 
+mesh(coef_pearson), 
 axis off square, 
 set(gca,'YDir','reverse'), 
-title('Pearson Correlation Coefficient')
+title('Ocurrencias de la detección del patrón (plot en elevación)')
+
+% Display number of ocurrencies on coef pearson
+number_stars = sum(sum(coef_pearson > threshold_stars));
+disp(['Número de estrellas detectadas: ' num2str(number_stars)]);
