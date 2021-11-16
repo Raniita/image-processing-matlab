@@ -1,5 +1,3 @@
-
-
 img_rgb = imread('iluminacion.jpg');
 
 [ind, map] = rgb2ind(img_rgb, 256);
