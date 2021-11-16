@@ -1,12 +1,14 @@
-img_rgb = imread('iluminacion.jpg');
+%HistogramProcessingName = 'Carotid.png';
+%HistogramProcessing = single(imread(HistogramProcessingName));
+%HistogramProcessing = mat2gray(HistogramProcessing,[0 255]);
+%HistogramProcessing = rgb2gray(HistogramProcessing);
 
-[ind, map] = rgb2ind(img_rgb, 256);
+img_rgb_file = 'iluminacion.jpg';
+img_rgb = imread(img_rgb_file);
+img_rgb = mat2gray(img_rgb,[0 255]);
+img_gray = rgb2gray(img_rgb);
+
+img_adj = imadjust(img_rgb, [0.07 0.67], [0 1]);
 
 figure
-imshow(ind)
-
-% go back
-img_rgb2 = ind2rgb(ind, map);
-
-figure
-imshow(img_rgb2)
+imshow(img_adj);

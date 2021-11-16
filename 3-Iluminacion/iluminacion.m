@@ -3,7 +3,7 @@
 clear;
 
 % Ajuste del gamma
-cte_gamma = 0.85;
+cte_gamma = 5;
 
 % Cargamos la imagen
 img = imread('iluminacion.jpg');
@@ -31,14 +31,14 @@ grid,
 title('Original CDF');
 
 % Pre adj
-img_pre = imadjust(img, [0.10 0.7], [ ]);
+img_pre = imadjust(img, [0 0.85], [ ]);
 gray_pre = rgb2gray(img_pre);
 hnorm_pre = imhist(gray_pre)./numel(gray_pre);
 cdf2 = cumsum(hnorm_pre);
 
 subplot(3,3,2)
 imshow(img_pre)
-imcontrast
+%imcontrast
 title('Imagen pre')
 
 subplot(3,3,5)
