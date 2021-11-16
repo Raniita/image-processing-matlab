@@ -9,8 +9,8 @@ clear;
 img_rgb = 'patrones.jpg';
 threshold_corre = 0.35;
  
-img_rgb = imread(img_rgb);
-%img = mat2gray(img,[0 255]);
+img_rgb = single(imread(img_rgb));
+img_rgb = mat2gray(img_rgb,[0 255]);
 img = rgb2gray(img_rgb);
 %[img, map] = rgb2ind(img_rgb, 256);
 %ind2rgb(img, map)
@@ -29,13 +29,13 @@ title('Original Image')
 %subplot(1,2,2), mesh(PatternDetection), axis off square, set(gca,'YDir','reverse'), title('Original Image (Elevation Plot)')
 
 %Pattern = PatternDetection(163:178,84:100);
-p_img = ginput(2);
+p_img = single(ginput(2));
 Pattern = img(p_img(1,2):p_img(2,2), p_img(1,1):p_img(2,1));
 
 % Imagen del pattern seleccionado
 figure, set(gcf, 'Name', 'Pattern Detection: Small Pattern to Detect', 'Position', get(0,'Screensize'))
 subplot(1,2,1), 
-imshow(Pattern), 
+imshow(Pattern, [0 1]), 
 axis off square,
 title('Small Pattern')
 %colormap gray, 
@@ -44,7 +44,7 @@ subplot(1,2,2), mesh(Pattern), axis off square, set(gca,'XDir','reverse'), title
 
 %% Deteccion del patron
 
-PearsonCorrelationCoefficient = lambda_covar(img, Pattern);
+PearsonCorrelationCoefficient = lambda_covar(single(img), single(Pattern));
 PearsonCorrelationCoefficientDem = sqrt(lambda_autocovar(img,Pattern).*lambda_autocovar(Pattern,Pattern));
 index = find(PearsonCorrelationCoefficientDem ~= 0);
 PearsonCorrelationCoefficient(index) = PearsonCorrelationCoefficient(index)./PearsonCorrelationCoefficientDem(index);
@@ -55,7 +55,7 @@ PearsonCorrelationCoefficient = PearsonCorrelationCoefficient.*(PearsonCorrelati
 
 figure, set(gcf, 'Name', 'Pattern Detection: Small Pattern Result', 'Position', get(0,'Screensize'))
 subplot(1,2,1), 
-imshow(uint8(PearsonCorrelationCoefficient*50)+img),
+imshow(PearsonCorrelationCoefficient*50+img, [0 1]),
 axis off square, 
 title('Pearson Correlation Coefficient')
 map=colormap('gray'); 
