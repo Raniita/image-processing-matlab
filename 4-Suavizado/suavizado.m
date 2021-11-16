@@ -15,3 +15,5 @@ title('Imagen original')
 subplot(1,2,2)
 imshow(img_filt)
 title('Imagen filtrada')
+
+% hacer en los dos dominios
