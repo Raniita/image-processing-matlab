@@ -7,7 +7,7 @@ HomomorphicFilter = single(imread(HomomorphicFilterName));
 HomomorphicFilter = mat2gray(HomomorphicFilter,[0 255]);
 %HomomorphicFilter = rgb2gray(HomomorphicFilter);
 
-D0 = 0.005;
+D0 = 0.004;
 
 Slope = 8; 
 N = size(HomomorphicFilter);
@@ -17,10 +17,10 @@ H = fftshift(1-exp(-Slope*(D.^2/(2*D0.^2))));
 
 %gammaL = 1 - mean(HomomorphicFilter(:));
 %gammaL = 0.95;
-gammaL= 0.95;
+gammaL= 0.92;
 %gammaH = 1 + mean(HomomorphicFilter(:));
 %gammaH = 1.1;
-gammaH = 1.1;
+gammaH = 1.03;
 
 H = ((gammaH - gammaL) .* H) + gammaL;
 

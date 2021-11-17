@@ -8,26 +8,26 @@ img = imread(img_rgb);
 img = rgb2gray(img);
 
 figure
-subplot(1,3,1)
+subplot(1,2,1)
 imshow(img)
 title('rgb')
 
 % Sal y pimienta (no es)
-density_noise =0.1;
-img_noisy = imnoise(img, 'salt & pepper', density_noise/100);
-subplot(1,3,2)
-imshow(img_noisy)
-title('ruido')
+%density_noise =0.1;
+%img_noisy = imnoise(img, 'salt & pepper', density_noise/100);
+%subplot(1,3,2)
+%imshow(img_noisy)
+%title('ruido')
 
 % Aplicamos filtro mediana
-neighborn = 6;
-times = 3;
+neighborn = 4;
+times = 5;
 img_median = img;
 for n=1:times,
     img_median = medfilt2(img_median, [1 1]*neighborn);
 end
 
-subplot(1,3,3)
+subplot(1,2,2)
 imshow(img_median),
 axis off square,
 colormap gray,
