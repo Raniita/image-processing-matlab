@@ -4,13 +4,107 @@
 \usepackage[left = 2cm, right = 2cm, bottom = 2cm, top = 3cm]{geometry}
 \usepackage{amsmath, amssymb}
 \usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{listings}
+\usepackage{courier}
+
+\usepackage[dvipsnames]{xcolor}
+
+\renewcommand{\lstlistingname}{Código}
+\renewcommand{\lstlistlistingname}{Listado de códigos}
+
+% https://tex.stackexchange.com/questions/60209/how-to-add-an-extra-level-of-sections-with-headings-below-subsubsection
+\newcommand{\subsubsubsection}[1]{\paragraph{#1}\mbox{}\\}
+\setcounter{secnumdepth}{4}
+\setcounter{tocdepth}{4}
+
+% Configure lstlisting
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+
+\lstdefinestyle{mystyle}{
+	backgroundcolor=\color{backcolour},   
+	commentstyle=\color{codegreen},
+	keywordstyle=\color{magenta},
+	numberstyle=\tiny\color{codegray},
+	stringstyle=\color{codepurple},
+	basicstyle=\ttfamily\footnotesize,
+	breakatwhitespace=false,         
+	breaklines=true,                 
+	captionpos=t,                    
+	keepspaces=true,                 
+	numbers=left,                    
+	numbersep=5pt,                  
+	showspaces=false,                
+	showstringspaces=false,
+	showtabs=false,                  
+	tabsize=2
+}
+
+\lstset{style=mystyle}
+
 
 \begin{document}
 	\selectlanguage{spanish}
-	\title{Entregable 1. Procesado de imágenes}
+	
+	\title{Proyecto 1. Procesado de imágenes con \texttt{MATLAB} \\ \textit{\textbf{\large Máster Universitario en Ingeniería de Telecomunicación}} \\ \textit{\large Procesado de señales acústicas e imágenes}}
 	\author{Enrique Fernández Sánchez}
 	
 	\maketitle
 	
+	\tableofcontents
+	
+	\addcontentsline{toc}{section}{Listado de códigos}
+	\lstlistoflistings
+	
 	\pagebreak
+	
+	\section{Anonimizado}
+	
+	\begin{lstlisting}[language=Matlab, caption={Implementación en MATLAB para anonimizado}]
+% 1 - Anonimizado Enrique 2021/2022
+% Ref: https://es.mathworks.com/help/images/ref/imcrop.html
+clear;
+
+% Cargamos la imagen
+img = imread('anonimizado.jpg');
+
+% Representamos la imagen original
+figure
+imshow(img);
+title('Imagen inicial (sin recortar)')
+
+% Recortamos la imagen con un rectangulo
+[crop_img, rect_crop] = imcrop(img);
+%rect_crop = [120 300 2750 1400];    % [xmin ymin width height]
+%crop_img = imcrop(img, rect_crop);
+
+% Comparativa imagen original vs imagen recortada
+figure
+%suptitle('Imagen Anonimizada')
+
+subplot(1,2,1)
+imshow(img)
+title('Imagen inicial')
+
+subplot(1,2,2)
+imshow(crop_img)
+title('Imagen recortada utilizando un rectangulo')
+	\end{lstlisting}
+	
+	\section{Contraste}
+	
+	\section{Iluminación}
+	
+	\section{Suavizado}
+	
+	\section{Realzado}
+	
+	\section{Ruido}
+	
+	\section{Patrones}
+	
+	\section{Pseudocoloración}
 \end{document}
