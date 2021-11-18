@@ -1,16 +1,19 @@
 % 5 - Realzado
-clear
+% Enrique
+clear;
 
 img_rgb = imread('realzado.jpg');
+
+% Preajuste expansion margen dinamico
 img_adj = imadjust(img_rgb, stretchlim(img_rgb), [ ]);
 
-% Example 1
+% Caso uno, prewitt
 filter = fspecial('prewitt');
 img_filtered = imfilter(img_adj, filter, 'replicate');
 %img_rgb_1 = imadd(img_adj, img_filtered);
 img_rgb_1 = img_adj - img_filtered;
 
-% Example 2
+% Caso dos, sobel
 filter = fspecial('sobel');
 img_filtered = imfilter(img_adj, filter, 'replicate');
 %img_rgb_2 = imadd(img_adj, img_filtered);

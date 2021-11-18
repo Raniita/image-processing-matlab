@@ -1,5 +1,5 @@
-% 3 - Iluminacion - Enrique 2021/2022
-% Ref: 
+% 3 - Iluminacion usando imadjust
+% Enrique
 clear;
 
 % Ajuste del gamma
@@ -38,7 +38,6 @@ cdf2 = cumsum(hnorm_pre);
 
 subplot(3,3,2)
 imshow(img_pre)
-%imcontrast
 title('Imagen pre')
 
 subplot(3,3,5)
@@ -56,13 +55,12 @@ title('Pre');
 
 % Transparencia 9
 img_adj = imadjust(img_pre, [0 0.6], [0 1], 0.85); % [low_in high_in] [low_out high_out]
-%img_adj = imadjust(img_pre, ())
-%img_adj = histeq(img_pre)
 
 gray_adj = rgb2gray(img_adj);
 hnorm_adj = imhist(gray_adj)./numel(gray_adj);
 cdf3 = cumsum(hnorm_adj);
 
+% Filtrado sobel, le da más realzado
 %filter = fspecial('sobel');
 %img_filtered = imfilter(img_pre, filter);
 %img_adj = imadd(img_adj, img_filtered);

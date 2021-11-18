@@ -8,16 +8,16 @@ img = imread('anonimizado.jpg');
 % Representamos la imagen original
 figure
 imshow(img);
-title('Imagen inicial (sin recortada)')
+title('Imagen inicial (sin recortar)')
 
 % Recortamos la imagen con un rectangulo
-rect_crop = [120 300 2750 1400];    % [xmin ymin width height]
-%[crop_img, rect_crop] = imcrop(img);
-crop_img = imcrop(img, rect_crop);
+[crop_img, rect_crop] = imcrop(img);
+%rect_crop = [120 300 2750 1400];    % [xmin ymin width height]
+%crop_img = imcrop(img, rect_crop);
 
 % Comparativa imagen original vs imagen recortada
 figure
-suptitle('Imagen Anonimizada')
+%suptitle('Imagen Anonimizada')
 
 subplot(1,2,1)
 imshow(img)

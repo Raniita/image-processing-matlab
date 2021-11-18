@@ -59,7 +59,7 @@ map(256,:)=[1 1 0]; colormap(map)
 
 subplot(1,2,2), 
 mesh(coef_pearson), 
-axis off square, 
+axis square, 
 set(gca,'YDir','reverse'), 
 title('Ocurrencias de la detección del patrón (plot en elevación)')
 

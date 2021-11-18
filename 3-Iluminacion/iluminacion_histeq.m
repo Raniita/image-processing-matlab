@@ -1,4 +1,7 @@
+% 3 - Iluminacion utilizando histeq
+% Enrique
 % Ref: https://www.ee.columbia.edu/~sfchang/course/dip-S04/sample/Contrast-Enhancement/contrast-enhance-chang.htm
+clear;
 
 img = imread('iluminacion.jpg');
 shadow_hsv = rgb2hsv(img);
