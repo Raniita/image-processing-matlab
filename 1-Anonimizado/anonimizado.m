@@ -1,4 +1,5 @@
-% 1 - Anonimizado Enrique 2021/2022
+% 1 - Anonimizado
+% Enrique 
 % Ref: https://es.mathworks.com/help/images/ref/imcrop.html
 clear;
 
@@ -12,6 +13,8 @@ title('Imagen inicial (sin recortar)')
 
 % Recortamos la imagen con un rectangulo
 [crop_img, rect_crop] = imcrop(img);
+
+% Manera automatica
 %rect_crop = [120 300 2750 1400];    % [xmin ymin width height]
 %crop_img = imcrop(img, rect_crop);
 
