@@ -77,7 +77,7 @@
 	
 	\noindent El código implementado sería el siguiente:
 	
-	\begin{lstlisting}[language=Matlab, caption={Implementación anonimizado con MATLAB}]
+	\begin{lstlisting}[language=Matlab, caption={Implementación anonimizado con \texttt{MATLAB}}]
 % 1 - Anonimizado
 % Enrique 
 % Ref: https://es.mathworks.com/help/images/ref/imcrop.html
@@ -152,7 +152,7 @@ title('Imagen recortada utilizando un rectangulo')
 
 	\noindent Para realzar la imagen podemos aplicar filtros directamente sobre la imagen original. En este caso, hemos aplicado un preajuste del histograma, para hacer que el margen dinámico ocupe todo el histograma. Una vez tenemos la imagen preajustada, la filtramos con \texttt{prewitt} o \texttt{sobel}.
 	
-	\begin{lstlisting}[language=Matlab, caption={Implementación de filtros para el realzado en MATLAB}]
+	\begin{lstlisting}[language=Matlab, caption={Implementación de filtros para el realzado en \texttt{MATLAB}}]
 % 5 - Realzado
 % Enrique
 clear;
@@ -224,7 +224,7 @@ title('Imagen realzada (sobel)')
 	
 	\noindent Puesto que el ruido de la imagen se puede entender como un ruido de tipo ``sal y pimienta'', una de las técnicas que podemos utilizar es ejecutar de manera recursiva un filtro de mediana sobre la imagen.
 	
-	\begin{lstlisting}[language=Matlab, caption={Implementación filtro mediana para reducir ruido en MATLAB}]
+	\begin{lstlisting}[language=Matlab, caption={Implementación filtro mediana para reducir ruido en \texttt{MATLAB}}]
 % 6 - Ruido Sal y Pimienta
 % Enrique
 clear;
@@ -270,6 +270,136 @@ title(['Imagen eliminado el ruido usando filtro mediana con N=' num2str(neighbor
 	\pagebreak
 	
 	\section{Patrones}
+	\noindent En este ejercicio vamos a practicar la técnica de detección de patrones utilizando el coeficiente de correlación de Pearson. Para ello, trabajamos sobre la imagen \ref{img: patrones src}.
+	
+	\begin{figure}[h]
+		\begin{center}
+			\includegraphics[width=0.8\textwidth]{img/patrones.jpg}
+			\caption{Imagen inicial de patrones}
+			\label{img: patrones src}
+		\end{center}
+	\end{figure}
+
+	\noindent Utilizando la imagen \ref{img: patrones src}, elegimos un patrón (una estrella) que queramos encontrar coincidencias. Una vez encontradas las coincidencias sobre el patrón establecido, volvemos a representar la imagen original resaltando dichas coincidencias.
+	
+	\begin{lstlisting}[language=Matlab, caption={Implementación detección de patrones en \texttt{MATLAB}}]
+% 7 - Patrones
+% Enrique
+% ref: https://es.mathworks.com/matlabcentral/answers/90094-how-to-convolved-two-image
+clear;
+
+img_rgb = 'patrones.jpg';
+threshold_corre = 0.55;
+threshold_stars = 0.85;
+
+img_rgb = single(imread(img_rgb));
+img_rgb = mat2gray(img_rgb,[0 255]);
+img = rgb2gray(img_rgb);
+
+% Funciones en una linea
+lambda_covar = @(A,B) conv2(A-mean(A(:)), B(end:-1:1,end:-1:1)-mean(B(:)), 'valid');
+lambda_autocovar = @(A,B) conv2(A.*A, ones(size(B)), 'valid')-conv2(A, ones(size(B)), 'valid').^2/numel(B);
+
+% Imagen original
+figure,
+imshow(img, [0 1]), 
+axis off image,
+title('Imagen original [RGB]')
+
+% Ejemplo de pattern: Pattern = PatternDetection(163:178,84:100);
+p_img = round(ginput(2));       % Warning, must be integer to use as index
+selected_pattern = img(p_img(1,2):p_img(2,2), p_img(1,1):p_img(2,1));
+
+% Imagen del pattern seleccionado
+figure,
+subplot(1,2,1), 
+imshow(selected_pattern, [0 1]), 
+axis off image,
+title('Patron seleccionado')
+
+subplot(1,2,2), 
+mesh(selected_pattern), 
+axis off square, 
+set(gca,'XDir','reverse'), 
+title('Patron seleccionado (plot en elevacion)')
+
+
+%% Deteccion del patron
+coef_pearson = lambda_covar(single(img), single(selected_pattern));
+coef_pearson_dem = sqrt(lambda_autocovar(img, selected_pattern).*lambda_autocovar(selected_pattern, selected_pattern));
+index = find(coef_pearson_dem ~= 0);
+coef_pearson(index) = coef_pearson(index)./coef_pearson_dem(index);
+
+coef_pearson = padarray(coef_pearson, floor((size(selected_pattern)-1)/2), 0, 'post');
+coef_pearson = padarray(coef_pearson, ceil((size(selected_pattern)-1)/2), 0, 'pre');
+coef_pearson = coef_pearson.*(coef_pearson > threshold_corre);
+
+figure,
+subplot(1,2,1), 
+imshow(coef_pearson*50+img, [0 1]),
+axis off image, 
+title('Patrones detectados resaltados en amarillo')
+% Resaltamos las ocurrencias con amarillo
+map=colormap('gray'); 
+map(256,:)=[1 1 0]; colormap(map)
+
+
+subplot(1,2,2), 
+mesh(coef_pearson), 
+axis square, 
+set(gca,'YDir','reverse'), 
+title('Ocurrencias de la deteccion del patron (plot en elevacion)')
+
+% Display number of ocurrencies on coef pearson
+number_stars = sum(sum(coef_pearson > threshold_stars));
+disp(['Numero de estrellas detectadas: ' num2str(number_stars)]);
+	\end{lstlisting}
+
+	\vspace{20px}
+
+	\noindent Una vez ejecutamos el código, primero nos aparece una figura con título ``\textit{Imagen original [RGB]}'', en la que tendremos que seleccionar la estrella a detectar (ver Figura \ref{img: patrones 1}). Tendremos que hacer click en las diagonales superior izquierda e inferior derecha del patrón (estrella) que queramos detectar, nos aparecerá una figura con el patrón que hemos seleccionado (ver Figura \ref{img: patrones 2})
+	
+	\vspace{20px}
+	
+	\begin{figure}[h]
+		\begin{center}
+			\includegraphics[width=0.75\textwidth]{img/patrones_1.png}
+			\caption{Imagen para seleccionar el patrón a buscar}
+			\label{img: patrones 1}
+		\end{center}
+	\end{figure}
+	
+	\pagebreak
+	
+	\begin{figure}[h]
+		\begin{center}
+			\includegraphics[width=0.8\textwidth]{img/patrones_2.png}
+			\caption{Figura resultante una vez seleccionamos el patrón}
+			\label{img: patrones 2}
+		\end{center}
+	\end{figure}
+
+	\noindent Una vez seleccionamos el patrón, podemos comprobar que además de la figura de la imagen \ref{img: patrones 2}, nos aparecer otra figura en la que se nos resalta en color amarillo las ocurrencias que tenemos en la imagen, en comparación con nuestro patrón (ver Figura \ref{img: patrones 3}). 
+	
+	\begin{figure}[h!]
+		\begin{center}
+			\includegraphics[width=1\textwidth]{img/patrones_3.png}
+			\caption{Figura resultante una vez seleccionamos el patrón}
+			\label{img: patrones 3}
+		\end{center}
+	\end{figure}
+
+	\pagebreak
+	
+	\noindent Además, hemos cuantificado el número de estrellas detectadas. Para ello, hemos tenido en cuenta un valor umbral por el cual consideramos una ocurrencia como una estrella. En la consola de MATLAB podemos comprobar cuantas estrellas hemos detectado (ver Figura \ref{img: patrones 4}).
+
+	\begin{figure}[h]
+		\begin{center}
+			\includegraphics[width=0.9\textwidth]{img/patrones_4.png}
+			\caption{Número de estrellas detectadas, mensaje en la consola en MATLAB }
+			\label{img: patrones 4}
+		\end{center}
+	\end{figure}
 	
 	\pagebreak
 	
@@ -287,7 +417,7 @@ title(['Imagen eliminado el ruido usando filtro mediana con N=' num2str(neighbor
 
 	\noindent Para la resolución de este ejercicio hemos usado la técnica de coloración de una imagen dependiendo de su nivel de gris. Para ello, hemos probado todos los mapas de colores que MATLAB nos ofrece, sin embargo solo \texttt{copper}, \texttt{pink}, \texttt{bone}, \texttt{hot} y \texttt{parula} nos aportaban resultados útiles.
 	
-	\begin{lstlisting}[language=Matlab, caption={Implementación de pseucoloración en MATLAB}]
+	\begin{lstlisting}[language=Matlab, caption={Implementación de pseucoloración en \texttt{MATLAB}}]
 		% 8 - Pseudocoloracion por nivel de gris
 		% Enrique 
 		
