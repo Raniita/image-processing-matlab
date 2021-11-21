@@ -1,4 +1,5 @@
-% 2 - Contraste Enrique 2021/2022
+% 2 - Contraste 
+% Enrique
 % Ref: https://es.mathworks.com/help/images/contrast-enhancement-techniques.html
 clear;
 
@@ -14,15 +15,14 @@ hnorm_org = imhist(gray_img)./numel(gray_img);
 figure
 subplot(2,3,1)
 imshow(img);
-title('Imagen inicial')
+title('Imagen inicial [RGB]')
 
 subplot(2,3,4)
 bar(hnorm_org,'stacked'); 
 axis square off, axis([-2 255 0 0.03]), 
 title('Histograma original'), 
-colorbar('XTickLabel','','location','North')
 
-% Transparencia 9
+% Expansion histograma
 img_adj = imadjust(img, stretchlim(img), [ ], cte_gamma);
 gray_adj = rgb2gray(img_adj);
 hnorm_adj = imhist(gray_adj)./numel(gray_adj);
@@ -30,15 +30,14 @@ hnorm_adj = imhist(gray_adj)./numel(gray_adj);
 % Representamos la imagen ajustada
 subplot(2,3,2)
 imshow(img_adj)
-title('IMAGEN AJUSTADA')
+title('Imagen expasion histograma')
 
 subplot(2,3,5)
 bar(hnorm_adj,'stacked'); 
 axis square off, axis([-2 255 0 0.03]), 
 title('Histograma ADJ'), 
-colorbar('XTickLabel','','location','North')
 
-% Transparencia 96. Filtro espacial
+% Filtro espacial
 filter = fspecial('prewitt');
 img_filtered = imfilter(img_adj, filter);
 img_2 = imadd(img_adj, img_filtered);
@@ -49,10 +48,9 @@ hnorm_filtered = imhist(gray_filtered)./numel(gray_filtered);
 % Representamos la imagen filtrada
 subplot(2,3,3)
 imshow(img_2)
-title('IMAGEN FILTRADA')
+title('Imagen hist expandido + filtro')
 
 subplot(2,3,6)
 bar(hnorm_filtered,'stacked'); 
 axis square off, axis([-2 255 0 0.03]), 
-title('Histograma FILT'), 
-colorbar('XTickLabel','','location','North')
+title('Histograma expandido + filtro'), 

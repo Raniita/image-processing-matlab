@@ -1,9 +1,10 @@
-% 2 - Contraste Enrique 2021/2022
+% 2 - Contraste 
+% Enrique
 % Ref: https://es.mathworks.com/help/images/contrast-enhancement-techniques.html
 clear;
 
 % Cargamos la imagen
-[X, map] = imread('contraste.jpg'); 
+X = imread('contraste.jpg'); 
 shadow_lab = rgb2lab(X);
 
 max_luminosity = 100; 
@@ -31,30 +32,27 @@ hnorm_adapt = imhist(gray_adapt)./numel(gray_adapt);
 figure
 subplot(2,3,1)
 imshow(shadow_imadjust)
-title('IMAGEN IMADJUST')
+title('Imagen usando imadjust [LAB]')
 
 subplot(2,3,4)
 bar(hnorm_imadj,'stacked'); 
 axis square off, axis([-2 255 0 0.03]), 
-title('Histograma IMADJUST'), 
-colorbar('XTickLabel','','location','North')
+title('Histograma usando imadjust [LAB]'), 
 
 subplot(2,3,2)
 imshow(shadow_histeq)
-title('IMAGEN HISTEQ')
+title('Imagen usando histeq [LAB]')
 
 subplot(2,3,5)
 bar(hnorm_histeq,'stacked'); 
 axis square off, axis([-2 255 0 0.03]), 
-title('Histograma HISTEQ'), 
-colorbar('XTickLabel','','location','North')
+title('Histograma usando histeq [LAB]'), 
 
 subplot(2,3,3)
 imshow(shadow_adapthisteq)
-title('IMAGEN ADAPTHISTEQ')
+title('Imagen usando adapthiseq [LAB]')
 
 subplot(2,3,6)
 bar(hnorm_adapt,'stacked'); 
 axis square off, axis([-2 255 0 0.03]), 
-title('Histograma ADAPTHISTEQ'), 
-colorbar('XTickLabel','','location','North')
+title('Histograma usando adapthiseq [LAB]'), 
