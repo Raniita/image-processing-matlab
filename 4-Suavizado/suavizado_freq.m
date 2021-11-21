@@ -3,7 +3,7 @@
 clear;
 
 img = im2single(imread('suavizado.jpg'));
-cte_gauss = 5;
+cte_gauss = 4.5;
 
 % Representamos imagen original
 figure,
