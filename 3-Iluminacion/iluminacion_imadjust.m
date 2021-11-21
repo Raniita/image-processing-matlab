@@ -9,7 +9,7 @@ cte_gamma = 5;
 img = imread('iluminacion.jpg');
 gray_img = rgb2gray(img);
 hnorm_org = imhist(gray_img)./numel(gray_img);
-cdf1 = cumsum(hnorm_org);
+cdf_org = cumsum(hnorm_org);
 
 % Representamos la imagen original
 figure
@@ -21,44 +21,41 @@ subplot(3,3,4)
 bar(hnorm_org,'stacked'); 
 axis square off, axis([-2 255 0 0.03]), 
 title('Histograma original'), 
-colorbar('XTickLabel','','location','North')
 
 subplot(3,3,7)
-plot(linspace(0,1,length(cdf1)),cdf1),
+plot(linspace(0,1,length(cdf_org)),cdf_org),
 axis([0 1 0 1]),
 axis square,
 grid,
-title('Original CDF');
+title('CDF Inicial');
 
 % Pre adj
 img_pre = imadjust(img, [0 0.85], [ ]);
 gray_pre = rgb2gray(img_pre);
 hnorm_pre = imhist(gray_pre)./numel(gray_pre);
-cdf2 = cumsum(hnorm_pre);
+cdf_pre = cumsum(hnorm_pre);
 
 subplot(3,3,2)
 imshow(img_pre)
-title('Imagen pre')
+title('Imagen preajustada ')
 
 subplot(3,3,5)
 bar(hnorm_pre,'stacked'); 
 axis square off, axis([-2 255 0 0.03]), 
-title('Histograma pre'), 
-colorbar('XTickLabel','','location','North')
+title('Histograma preajustada'), 
 
 subplot(3,3,8)
-plot(linspace(0,1,length(cdf2)),cdf2),
+plot(linspace(0,1,length(cdf_pre)),cdf_pre),
 axis([0 1 0 1]),
 axis square,
 grid,
-title('Pre');
+title('CDF Preajuste');
 
-% Transparencia 9
 img_adj = imadjust(img_pre, [0 0.6], [0 1], 0.85); % [low_in high_in] [low_out high_out]
 
 gray_adj = rgb2gray(img_adj);
 hnorm_adj = imhist(gray_adj)./numel(gray_adj);
-cdf3 = cumsum(hnorm_adj);
+cdf_adj = cumsum(hnorm_adj);
 
 % Filtrado sobel, le da más realzado
 %filter = fspecial('sobel');
@@ -68,17 +65,16 @@ cdf3 = cumsum(hnorm_adj);
 % Representamos la imagen original
 subplot(3,3,3)
 imshow(img_adj);
-title('Imagen adj')
+title('Imagen iluminada')
 
 subplot(3,3,6)
 bar(hnorm_adj,'stacked'); 
 axis square off, axis([-2 255 0 0.03]), 
-title('Histograma adj'), 
-colorbar('XTickLabel','','location','North')
+title('Histograma iluminado'), 
 
 subplot(3,3,9)
-plot(linspace(0,1,length(cdf3)),cdf3),
+plot(linspace(0,1,length(cdf_adj)),cdf_adj),
 axis([0 1 0 1]),
 axis square,
 grid,
-title('ADJ');
+title('CDF iluminado');

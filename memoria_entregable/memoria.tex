@@ -452,6 +452,198 @@ title('Histograma usando adapthiseq [LAB]'),
 	
 	\section{Iluminación}
 	
+	\noindent En este ejercicio tenemos por objetivo mejorar la iluminación de la imagen \ref{img: iluminacion src}. Para ello utilizaremos varías técnicas, una de ajuste de histograma y otra de filtrado.
+	
+	\begin{figure}[h]
+		\begin{center}
+			\includegraphics[width=0.6\textwidth]{img/iluminacion.jpg}
+			\caption{Figura inicial iluminación}
+			\label{img: iluminacion src}
+		\end{center}
+	\end{figure}
+
+	\noindent Para mejorar la iluminación de dicha imagen, vamos a probar con dos técnicas:
+	\begin{itemize}
+		\item Correción del histograma. (\texttt{iluminacion\_imadjust.m})
+		\item Filtrado homomórfico.
+		(\texttt{iluminacion\_homomorfico.m})
+	\end{itemize}
+
+	\vspace{10px}
+
+	\noindent \textbf{\large Corrección de histograma}. \\ 
+	
+	\noindent En este apartado hacemos uso de la función \texttt{imadjust} para intentar ajustar el histograma de la imagen para que nos salga más iluminada. Para ello, seleccionamos la parte del histograma que elijamos, y la ``copiamos'' al histograma de la nueva imagen, comprobando que el margen dinámico ocupa todo el histograma.\\
+	
+	\begin{lstlisting}[language=Matlab, caption={Implementación iluminación utilizando ajustes en el histograma en \texttt{MATLAB}}]
+% 3 - Iluminacion usando imadjust
+% Enrique
+clear;
+
+% Ajuste del gamma
+cte_gamma = 5;
+
+
+% Cargamos la imagen
+img = imread('iluminacion.jpg');
+gray_img = rgb2gray(img);
+hnorm_org = imhist(gray_img)./numel(gray_img);
+cdf_org = cumsum(hnorm_org);
+
+figure
+subplot(3,3,1)
+imshow(img);
+title('Imagen inicial')
+subplot(3,3,4)
+bar(hnorm_org,'stacked'); 
+axis square off, axis([-2 255 0 0.03]), 
+title('Histograma original'), 
+
+subplot(3,3,7)
+plot(linspace(0,1,length(cdf_org)),cdf_org),
+axis([0 1 0 1]),
+axis square,
+grid,
+title('CDF Inicial');
+
+% Pre adj
+img_pre = imadjust(img, [0 0.85], [ ]);
+gray_pre = rgb2gray(img_pre);
+hnorm_pre = imhist(gray_pre)./numel(gray_pre);
+cdf_pre = cumsum(hnorm_pre);
+
+subplot(3,3,2)
+imshow(img_pre)
+title('Imagen preajustada ')
+subplot(3,3,5)
+bar(hnorm_pre,'stacked'); 
+axis square off, axis([-2 255 0 0.03]), 
+title('Histograma preajustada'), 
+
+subplot(3,3,8)
+plot(linspace(0,1,length(cdf_pre)),cdf_pre),
+axis([0 1 0 1]),
+axis square,
+grid,
+title('CDF Preajuste');
+
+img_adj = imadjust(img_pre, [0 0.6], [0 1], 0.85); % [low_in high_in] [low_out high_out]
+
+gray_adj = rgb2gray(img_adj);
+hnorm_adj = imhist(gray_adj)./numel(gray_adj);
+cdf_adj = cumsum(hnorm_adj);
+
+% Filtrado sobel, le da mas realzado
+%filter = fspecial('sobel');
+%img_filtered = imfilter(img_pre, filter);
+%img_adj = imadd(img_adj, img_filtered);
+subplot(3,3,3)
+imshow(img_adj);
+title('Imagen iluminada')
+
+subplot(3,3,6)
+bar(hnorm_adj,'stacked'); 
+axis square off, axis([-2 255 0 0.03]), 
+title('Histograma iluminado'), 
+
+subplot(3,3,9)
+plot(linspace(0,1,length(cdf_adj)),cdf_adj),
+axis([0 1 0 1]),
+axis square,
+grid,
+title('CDF iluminado');
+	\end{lstlisting}
+
+	\noindent Una vez ejecutamos el script \texttt{iluminacion\_imadjust.m}, obtenemos una imagen comparativa entre la imagen original y la imagen con la iluminación ajustada, además podemos ver la representación del histograma y de su CDF, respectivamente (ver Figura \ref{img: iluminacion imadjust}).
+	
+	\begin{figure}[h]
+		\begin{center}
+			\includegraphics[width=0.7\textwidth]{img/iluminacion_imadjust.png}
+			\caption{Figura resultante tras la ejecución del script \texttt{iluminacion\_imadjust.m}}
+			\label{img: iluminacion imadjust}
+		\end{center}
+	\end{figure}
+	
+	\pagebreak
+	
+	\noindent \textbf{\large Filtrado homomórfico}. \\ 
+	
+	\noindent En este apartado hacemos aplicamos la técnica de filtrado homomórfico, con el objetivo de mejorar la iluminación de la zona más ``oscura'', intentando afectar lo menos posible a la zona más ``clara''. Para ello trabajaremos en el dominio de la frecuencia, en donde aplicaremos el filtrado por cada uno de los canales R,G y B de la imagen, para más tarde reconstruir la imagen una vez filtrada. \\
+	
+	\begin{lstlisting}[language=Matlab, caption={Implementación iluminación utilizando filtrado homomórfico en \texttt{MATLAB}}]
+% 3 - Iluminacion usando filtro homomorfico
+% Enrique
+clear;
+
+img = 'iluminacion.jpg';
+img_rgb = imread(img);
+
+img_src = single(imread(img));
+img_src = mat2gray(img_src, [0 255]);
+%img_src = rgb2gray(img_src);
+
+freq = 0.004;
+
+Slope = 8; 
+N = size(img_src);
+[u,v] = freqspace(N,'meshgrid'); 
+D = sqrt(u.^2+v.^2);
+H = fftshift(1-exp(-Slope*(D.^2/(2*freq.^2))));
+
+%gammaL = 1 - mean(img_src(:));
+%gammaL = 0.95;
+gammaL= 0.92;
+%gammaH = 1 + mean(img_src(:));
+%gammaH = 1.1;
+gammaH = 1.03;
+
+H = ((gammaH - gammaL) .* H) + gammaL;
+
+% Pasamos al dominio de la frecuencia
+fft2_rgb = fft2(reallog(img_src+1e-6));
+
+% Canal R
+HomomorphicFilterHF_1 = exp(real(ifft2(H.*fft2_rgb(:,:,1))))-1e-6;
+
+% Canal G
+HomomorphicFilterHF_2 = exp(real(ifft2(H.*fft2_rgb(:,:,2))))-1e-6;
+
+% Canal B
+HomomorphicFilterHF_3 = exp(real(ifft2(H.*fft2_rgb(:,:,3))))-1e-6;
+
+% Reconstruimos la imagen
+img_rgb_adj(:,:, 1) = HomomorphicFilterHF_1;
+img_rgb_adj(:,:, 2) = HomomorphicFilterHF_2;
+img_rgb_adj(:,:, 3) = HomomorphicFilterHF_3;
+
+
+% Representamos ambas imagenes
+figure,
+subplot(1,2,1), 
+imshow(img_src, [0 1]),
+axis off image,
+title('Imagen original [RGB]')
+
+subplot(1,2,2),
+imshow(img_rgb_adj, [0 1]),
+axis off image,
+title(['Imagen filtrada [RGB] (Freq corte = ' num2str(freq,3) ', pendiente = ' num2str(Slope,3) ', \gamma_L = ' num2str(gammaL,3) ', \gamma_H = ' num2str(gammaH,3) ')'])
+	\end{lstlisting}
+
+	\vspace{10px}
+
+	\noindent Una vez ejecutamos el script \texttt{iluminacion\_homomorfico.m}, aparece una figura en la que podemos comparar la imagen inicial con la imagen resultante tras el filtrado homomórfico (ver Figura \ref{img: iluminacion homomorfico}). Podemos comprobar como se iluminan más zonas respecto a lo que obtuvimos en la técnica de corrección de histograma, aunque en la zona de la izquierda la imagen ha quedado un poco ``quemada'', algo que se podría arreglar con un ajuste fino de $\gamma_L$ y $\gamma_H$.
+	
+	\vspace{10px}
+
+	\begin{figure}[h]
+		\begin{center}
+			\includegraphics[width=1\textwidth]{img/iluminacion_homomorfico.png}
+			\caption{Figura resultante al ejecutar el script \texttt{iluminacion\_homomorfico.m}}
+			\label{img: iluminacion homomorfico}
+		\end{center}
+	\end{figure}
+
 	\pagebreak
 	
 	\section{Suavizado}
@@ -603,13 +795,13 @@ img_adj = imadjust(img_rgb, stretchlim(img_rgb), [ ]);
 
 % Caso uno, prewitt
 filter = fspecial('prewitt');
-img_filtered = imfilter(img_adj, filter, 'replicate');
+img_filtered = imfilter(img_adj, filter, 'conv');
 %img_rgb_1 = imadd(img_adj, img_filtered);
 img_rgb_1 = img_adj - img_filtered;
 
 % Caso dos, sobel
 filter = fspecial('sobel');
-img_filtered = imfilter(img_adj, filter, 'replicate');
+img_filtered = imfilter(img_adj, filter, 'conv');
 %img_rgb_2 = imadd(img_adj, img_filtered);
 img_rgb_2 = img_adj - img_filtered;
 
