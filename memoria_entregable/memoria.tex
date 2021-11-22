@@ -133,7 +133,7 @@ title('Imagen recortada utilizando un rectangulo')
 	\pagebreak
 	
 	\section{Contraste}
-	\noindent En este ejercicio vamos a trabajar las diferentes técnicas que podemos utilizar para mejorar el contraste de una imagen. Para ello vamos a utilizar la siguiente imagen (ver Figura \ref{img: contraste src}).
+	\noindent En este ejercicio trabajamos las diferentes técnicas que podemos utilizar para mejorar el contraste de una imagen. Para ello vamos a utilizar la siguiente imagen (ver Figura \ref{img: contraste src}).
 	
 	\begin{figure}[h]
 		\begin{center}
@@ -143,7 +143,7 @@ title('Imagen recortada utilizando un rectangulo')
 		\end{center}
 	\end{figure}
 
-	\noindent Puesto que tenemos diferentes maneras de mejorar el contraste de la imagen, hemos realizado diferentes pruebas con el fin de explorar las posibilidades disponibles. Estas pruebas se resumen en:
+	\noindent Puesto que tenemos diferentes maneras de mejorar el contraste de la imagen, hemos realizado diferentes ejemplos con el fin de explorar las posibilidades disponibles. Estas pruebas se resumen en:
 	\begin{itemize}
 		\item Expansión del histograma, ajuste de iluminación con gamma y filtros espaciales.\\ (\texttt{contraste\_imadjust.m})
 		\item Corrección de histograma utilizando herramienta \texttt{imcontrast}.\\
@@ -160,7 +160,7 @@ title('Imagen recortada utilizando un rectangulo')
 	
 	\noindent \textbf{\large Expansión del histograma, ajuste de iluminación y filtros espaciales}. \\ 
 	
-	\noindent En este ejemplo lo que hacemos es aplicar una técnica de expansión del histograma, además de corregir la curva de histograma con el valor \texttt{cte\_gamma}. Por último, intentamos aplicar un filtro espacial (\texttt{prewitt}) para resaltar los cambios de color.
+	\noindent En esta implementación lo que hacemos es aplicar una técnica de expansión del histograma, además de corregir la curva de histograma con el valor \texttt{cte\_gamma}. Por último, intentamos aplicar un filtro espacial (\texttt{prewitt}) para resaltar los cambios de color.
 	
 	\vspace{10px}
 	
@@ -450,6 +450,15 @@ title('Histograma usando adapthiseq [LAB]'),
 	
 	\pagebreak
 	
+	\noindent Comparando las diferentes implementaciones que hemos realizado, llegamos a las siguientes conclusiones:
+	\begin{itemize}
+		\item La técnica de ajustar con \texttt{imcontrast} es la más fiel a la imagen inicial, en lo que a colores respecta. También la técnica de expansión de histograma funciona bien, aunque el resaltado con el filtro \texttt{prewitt} no realza mucho la imagen.
+		\item La implementación utilizando \texttt{histeq} si que nos aporta una mejora considerable en el contraste, sin embargo los colores se ven modificados. Además, el histograma se ve muy modificado respecto la imagen inicial.
+		\item Para la implementación en LAB comprobamos que las técnicas funcionan bien, pero tanto los colores como los bordes se intensifican mucho, sin embargo, la forma del histograma si que se parece a la de la imagen inicial.
+	\end{itemize}
+	
+	\pagebreak
+	
 	\section{Iluminación}
 	
 	\noindent En este ejercicio tenemos por objetivo mejorar la iluminación de la imagen \ref{img: iluminacion src}. Para ello utilizaremos varías técnicas, una de ajuste de histograma y otra de filtrado.
@@ -473,7 +482,7 @@ title('Histograma usando adapthiseq [LAB]'),
 
 	\noindent \textbf{\large Corrección de histograma}. \\ 
 	
-	\noindent En este apartado hacemos uso de la función \texttt{imadjust} para intentar ajustar el histograma de la imagen para que nos salga más iluminada. Para ello, seleccionamos la parte del histograma que elijamos, y la ``copiamos'' al histograma de la nueva imagen, comprobando que el margen dinámico ocupa todo el histograma.\\
+	\noindent En este apartado hacemos uso de la función \texttt{imadjust} para intentar ajustar el histograma de la imagen para que nos salga más iluminada. Para ello, seleccionamos la parte del histograma que consideremos, y la ``copiamos'' al histograma de la nueva imagen, comprobando que el margen dinámico ocupa todo el histograma.\\
 	
 	\begin{lstlisting}[language=Matlab, caption={Implementación iluminación utilizando ajustes en el histograma en \texttt{MATLAB}}]
 % 3 - Iluminacion usando imadjust
@@ -646,6 +655,15 @@ title(['Imagen filtrada [RGB] (Freq corte = ' num2str(freq,3) ', pendiente = ' n
 
 	\pagebreak
 	
+	\noindent Una vez comprobadas las diferente técnicas, extraemos las siguientes conclusiones:
+	\begin{itemize}
+		\item Ninguna de las técnicas implementadas mejora considerablemente la iluminación de la imagen, ya que cuando conseguimos mejorar la zona más oscura, la zona que ya estaba iluminada empieza a iluminarse de más (perdiendo información, ya que parece como si la imagen estuviera quemada).
+		\item Las técnicas necesitan un ajuste muy fino para llegar a resultados que consideremos muy buenos.
+		\item Ambas técnicas funcionan bien para iluminar los suficiente la parte más oscura, de modo que podamos interpretar nuevos detalles de la imagen.
+	\end{itemize}
+
+	\pagebreak
+	
 	\section{Suavizado}
 	
 	\noindent En este apartado tenemos que aplicar técnicas de suavizado a la imagen \ref{img: suavizado src}. El objetivo es obtener una imagen en la que se vean suavizados los diferentes desperfectos.
@@ -766,12 +784,21 @@ title('Imagen filtrada en el dominio de la frecuencia [RGB]')
 			\label{img: suavizado freq}
 		\end{center}
 	\end{figure}
+
+	\vspace{20px}
+
+	\noindent Una vez comprobadas las diferentes técnicas, extraemos las siguientes conclusiones:
+	\begin{itemize}
+		\item Ambas soluciones aportan un suavizado respecto a la imagen inicial.
+		\item Por mucho ajuste que realicemos a los filtros, siempre habrá zonas que nos cueste más eliminar. Por ejemplo, en ambas imágenes suavizadas podemos apreciar restos de ``cuadrados'' en las zonas suavizadas.
+		\item Podemos aplicar un filtrado de tipo guassiano tanto en espacio como en frecuencia.
+	\end{itemize}
 	
 	\pagebreak
 	
 	\section{Realzado}
 	
-	\noindent En este ejercicio tenemos que aplicar técnicas de realzado para obtener más detalles en la imagen X. Para ello, aplicaremos diferentes filtros, con el objetivo de resaltar los cambios entre las diferentes zonas de color de la imagen.
+	\noindent En este ejercicio tenemos que aplicar técnicas de realzado para obtener más detalles en la imagen \ref{img: realzado src}. Para ello, aplicaremos diferentes filtros, con el objetivo de resaltar los cambios entre las diferentes zonas de color de la imagen.
 	
 	\begin{figure}[h]
 		\begin{center}
@@ -843,7 +870,7 @@ title('Imagen realzada (sobel)')
 	
 	\section{Ruido}
 	
-	\noindent En este ejercicio tenemos que aplicar técnicas de reducción de ruido a la imagen \ref{img: ruido src}. Lo primero que tendríamos que intentar hacer es ver que tipo de ruido es, en este caso creemos que es ruido tipo ``sal y pimienta''.
+	\noindent En este ejercicio tenemos que aplicar técnicas de reducción de ruido a la imagen \ref{img: ruido src}. Lo primero que tendríamos que intentar hacer es ver que tipo de ruido es, en este caso creemos que es ruido tipo ``sal y pimienta'' o impulsivo.
 	
 	\begin{figure}[h]
 		\begin{center}
@@ -853,7 +880,7 @@ title('Imagen realzada (sobel)')
 		\end{center}
 	\end{figure}
 	
-	\noindent Puesto que el ruido de la imagen se puede entender como un ruido de tipo ``sal y pimienta'', una de las técnicas que podemos utilizar es ejecutar de manera recursiva un filtro de mediana sobre la imagen.
+	\noindent Puesto que el ruido de la imagen se puede entender como un ruido de tipo ``sal y pimienta'' o impulsivo, una de las técnicas que podemos utilizar es ejecutar de manera recursiva un filtro de mediana sobre la imagen.
 	
 	\begin{lstlisting}[language=Matlab, caption={Implementación filtro mediana para reducir ruido en \texttt{MATLAB}}]
 % 6 - Ruido Sal y Pimienta
@@ -888,7 +915,7 @@ title(['Imagen eliminado el ruido usando filtro mediana con N=' num2str(neighbor
 
 	\vspace{10px}
 
-	\noindent Una vez ejecutado el código, tendremos como salida una comparativa entre la imagen inicial (ver figura \ref{img: ruido src}) y imagen resultante tras eliminar el ruido ``sal y pimienta'':
+	\noindent Una vez ejecutado el código, tendremos como salida una comparativa entre la imagen inicial (ver figura \ref{img: ruido src}) y imagen resultante tras eliminar el ruido ``sal y pimienta''. Podemos comprobar como se ha eliminado prácticamente la totalidad del ruido.
 	
 	\begin{figure}[h]
 		\begin{center}
@@ -1036,13 +1063,13 @@ disp(['Numero de estrellas detectadas: ' num2str(number_stars)]);
 	
 	\section{Pseudocoloración}
 	
-	\noindent En este ejercicio tenemos que aplicar técnicas de pseudocoloración a la imagen de un planeta (ver Figura X), con esto pretendemos ver detalles, que en el caso de ver la imagen en niveles de gris no veríamos.
+	\noindent En este ejercicio tenemos que aplicar técnicas de pseudocoloración a la imagen de un planeta (ver Figura \ref{img: pseudocoloracion src}), con esto pretendemos ver detalles, que en el caso de ver la imagen en niveles de gris no veríamos.
 	
 	\begin{figure}[h]
 		\begin{center}
 			\includegraphics[width=0.4\textwidth]{img/pseudocoloracion.jpg}
 			\caption{Imagen inicial pseudocoloración}
-			\label{img: pseudocoloración src}
+			\label{img: pseudocoloracion src}
 		\end{center}
 	\end{figure}
 
@@ -1099,7 +1126,7 @@ disp(['Numero de estrellas detectadas: ' num2str(number_stars)]);
 	%\vspace{10px}
 	\pagebreak
 	
-	\noindent Una vez ejecutado el código, tendremos como salida una comparativa entre la imagen inicial (ver figura \ref{img: pseudocoloración src}) y las diferentes imágenes resultantes tras aplicar pseudocoloración:
+	\noindent Una vez ejecutado el código, tendremos como salida una comparativa entre la imagen inicial (ver Figura \ref{img: pseudocoloracion src}) y las diferentes imágenes resultantes tras aplicar pseudocoloración (ver Figura \ref{img: pseudocoloracion output}):
 	
 	\begin{figure}[h]
 		\begin{center}
