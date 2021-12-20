@@ -4,7 +4,7 @@ clc,
 close all
 
 % Leer imagen
-img = imread('./photos/img_test5.jpg');
+img = imread('./photos/img_test10.jpg');
 img_rgb = img;
 img = im2double(rgb2gray(img));
 %figure, imagesc(img), axis off image, colormap gray
