@@ -1,21 +1,21 @@
 %% Detectar placas de calles
 % SRC: https://es.mathworks.com/help/images/detecting-a-cell-using-image-segmentation.html
-clc,
+%clc,
 close all
 
-dataset_images = {'callejon_soledad_1.jpg', ...     %1: OK (tarda mucho)
+dataset_images = {'calle_condesaPeralta.jpg', ...   %1: OK
                   'callejon_soledad_2.jpg', ...     %2: OK
                   'calle_aire.jpg', ...             %3: OK
-                  'calle_intendencia.jpg', ...      %4: KO (mucha garbage)
+                  'calle_sanAgustin.jpg', ...       %4: OK 
                   'calle_jabonerias.jpg', ...       %5: OK
-                  'calle_canales.jpg', ...          %6: OK
-                  'calle_sanroque.jpg', ...         %7: KO
+                  'calle_garciaLorca.jpg', ...      %6: OK
+                  'calle_juanFernandez.jpg', ...    %7: OK (sale alguna ventana)
                   'calle_tolosa.jpg', ...           %8: OK
                   'calle_pepeConesa.jpg', ...       %9: OK
-                  'calle_casaHierro.jpg'};          %10: OK
+                  'calle_casaHierro.jpg'};         %10: OK
 
- j = 10;
- %for j=1:length(dataset_images) 
+ %j = 1;
+ for j=1:length(dataset_images) 
     disp([ num2str(j) '. Ejecutando morfologia para la imagen: ' dataset_images{j}])
     
     % Leer imagen
@@ -32,8 +32,8 @@ dataset_images = {'callejon_soledad_1.jpg', ...     %1: OK (tarda mucho)
     %figure, imagesc(mask), axis off image, colormap gray
 
     % Dilatar la imagen
-    struct_elem90 = strel('line', 10, 90);
-    struct_elem0 = strel('line', 10, 0);
+    struct_elem90 = strel('line', 12, 90);
+    struct_elem0 = strel('line', 12, 0);
     mask_dilate = imdilate(mask, [struct_elem90 struct_elem0]);
     %figure, imagesc(mask_dilate), axis off image, colormap gray
 
@@ -46,7 +46,7 @@ dataset_images = {'callejon_soledad_1.jpg', ...     %1: OK (tarda mucho)
     %figure, imagesc(mask_noborder), axis off image, colormap gray,
 
     % Suavizamos el objeto
-    struct_elemD = strel('rectangle', [8 15]);
+    struct_elemD = strel('rectangle', [12 15]);
     mask_final = imerode(mask_noborder, struct_elemD);
     mask_final = imerode(mask_final, struct_elemD);
     %figure, imagesc(mask_final), axis off image, colormap gray
@@ -58,6 +58,8 @@ dataset_images = {'callejon_soledad_1.jpg', ...     %1: OK (tarda mucho)
 
     % Multiplcar
     img_mult = immultiply(img, mask_final);
+    se_close = strel('line', 3, 90);
+    img_mult = imclose(img_mult, se_close);
     %figure, imagesc(img_mult), axis off image, colormap gray
 
     % OCR
@@ -105,4 +107,4 @@ dataset_images = {'callejon_soledad_1.jpg', ...     %1: OK (tarda mucho)
     % Confianza
     text(10, 60, str_confidence, 'BackgroundColor', [1 1 1])
     disp('********')
- %end
+ end
