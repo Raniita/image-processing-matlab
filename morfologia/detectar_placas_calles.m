@@ -14,7 +14,7 @@ dataset_images = {'calle_condesaPeralta.jpg', ...   %1: OK
                   'calle_pepeConesa.jpg', ...       %9: OK
                   'calle_casaHierro.jpg'};         %10: OK
 
- %j = 1;
+ %j = 5;
  for j=1:length(dataset_images) 
     disp([ num2str(j) '. Ejecutando morfologia para la imagen: ' dataset_images{j}])
     
@@ -31,6 +31,12 @@ dataset_images = {'calle_condesaPeralta.jpg', ...   %1: OK
     mask = edge(img, 'sobel', thresshold * k);
     %figure, imagesc(mask), axis off image, colormap gray
 
+    % Detecctar bordes (gradiente morfologico)
+    % SRC: https://blogs.mathworks.com/steve/2006/09/25/dilation-erosion-and-the-morphological-gradient/
+    struc_elemGrad = strel('diamond', 2);
+    mask = im2bw(imdilate(img, struc_elemGrad) - imerode(img, struc_elemGrad));
+    %figure, imagesc(mask), axis off image, colormap gray, colorbar
+    
     % Dilatar la imagen
     struct_elem90 = strel('line', 12, 90);
     struct_elem0 = strel('line', 12, 0);
@@ -38,7 +44,7 @@ dataset_images = {'calle_condesaPeralta.jpg', ...   %1: OK
     %figure, imagesc(mask_dilate), axis off image, colormap gray
 
     % Llenar brechas interiores
-    mask_fill = imfill(mask_dilate,'holes');
+    mask_fill = imfill(mask_dilate, 'holes');
     %figure, imagesc(mask_fill), axis off image, colormap gray
 
     % Retirar los objetos no conectados con el borde
@@ -56,7 +62,7 @@ dataset_images = {'calle_condesaPeralta.jpg', ...   %1: OK
     %img_fuse = imfuse(img, BWfinal, 'falsecolor', 'ColorChannels', [1 2 1]);
     %figure, imagesc(img_fuse), axis off image, colormap gray
 
-    % Multiplcar
+    % Multiplicar
     img_mult = immultiply(img, mask_final);
     se_close = strel('line', 3, 90);
     img_mult = imclose(img_mult, se_close);
