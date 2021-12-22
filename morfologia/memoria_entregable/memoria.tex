@@ -71,7 +71,7 @@
 	
 	\noindent En este apartado vamos a comentar la implementación de mi ``script'' para detectar placas de calles, utilizando morfología matemática con \texttt{MATLAB}. \\
 	
-	\noindent El código completo de mi implementación lo encontramos en la sección: X.
+	\noindent El código completo de mi implementación lo encontramos en la sección: \ref{section: codigo}.
 	
 	\subsection{Primera implementación}
 	\noindent A modo de ejemplo, voy a ir comentando cada uno de los pasos que sigue una imagen hasta llegar a su segmentación final y posterior procesado del OCR.
@@ -519,6 +519,7 @@ mask = im2bw(imdilate(img, struc_elemGrad) - imerode(img, struc_elemGrad));
 	\pagebreak
 	
 \section{Código desarrollado}
+\label{section: codigo}
 \noindent En este apartado se encuentra el código integro utilizado para todas las imágenes. Es importante remarcar que todas las imágenes utilizan los mismos elementos estructurantes, por lo que se trata de un algoritmo genérico. Lo único que cambia es la parte de detección de bordes que hemos comentado en el apartado anterior.
 
 \begin{lstlisting}[language=matlab, caption={Código implementado para segmentación y OCR de carteles de calles, utilizando morfología matemática}]
